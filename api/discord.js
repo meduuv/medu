@@ -1,4 +1,5 @@
 const LANYARD = "https://api.lanyard.rest/v1/users/";
+const DEFAULT_DISCORD_ID = "1499746728251887650";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") {
@@ -6,9 +7,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const id = process.env.DISCORD_ID;
-  if (!id || !/^\\d{17,20}$/.test(id)) {
-    return res.status(200).json({ ok: false, error: "DISCORD_ID is not configured" });
+  const id = process.env.DISCORD_ID || DEFAULT_DISCORD_ID;
+  if (!/^\d{17,20}$/.test(id)) {
+    return res.status(200).json({ ok: false, error: "Invalid Discord ID" });
   }
 
   try {
