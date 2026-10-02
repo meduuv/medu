@@ -1,0 +1,12 @@
+{
+  "name": "medu-profile-mirror",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ad-free live mirror of the public guns.lol/meduu profile",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "cheerio": "^1.1.2"
+  }
+}
