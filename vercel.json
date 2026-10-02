@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "functions": {
+    "api/profile.js": {
+      "maxDuration": 15
+    }
+  },
+  "headers": [
+    {
+      "source": "/",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    }
+  ]
+}
