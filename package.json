@@ -1,12 +1,9 @@
 {
-  "name": "medu-profile-mirror",
-  "version": "1.0.0",
+  "name": "medu-portfolio",
+  "version": "2.0.0",
   "private": true,
-  "description": "Ad-free live mirror of the public guns.lol/meduu profile",
+  "description": "Interactive portfolio for Medu",
   "engines": {
     "node": ">=20"
-  },
-  "dependencies": {
-    "cheerio": "^1.1.2"
   }
 }
