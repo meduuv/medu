@@ -1,4 +1,4 @@
-const cheerio = require("cheerio");
+import * as cheerio from "cheerio";
 
 const PROFILE_URL = "https://guns.lol/meduu";
 
@@ -19,7 +19,7 @@ const REMOVE_SELECTORS = [
   "[data-ad-slot]"
 ];
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "HEAD") {
     res.setHeader("Allow", "GET, HEAD");
     return res.status(405).send("Method not allowed");
