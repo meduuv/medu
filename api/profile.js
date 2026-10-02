@@ -1,34 +1,31 @@
-import * as cheerio from "cheerio";
+const SOURCE = "https://guns.lol/meduu";
 
-const PROFILE_URL = "https://guns.lol/meduu";
-
-const REMOVE_SELECTORS = [
-  "script[src*='googlesyndication']",
-  "script[src*='doubleclick']",
-  "iframe[src*='doubleclick']",
-  "iframe[src*='googlesyndication']",
-  "iframe[src*='googleadservices']",
-  ".adsbygoogle",
-  "[id*='google_ads']",
-  "[class*='google-ad']",
-  "[id*='advertisement']",
-  "[class*='advertisement']",
-  "[id*='ad-container']",
-  "[class*='ad-container']",
-  "[data-ad]",
-  "[data-ad-slot]"
+const SOCIAL_HOSTS = [
+  "github.com", "discord.com", "discord.gg", "instagram.com", "x.com",
+  "twitter.com", "tiktok.com", "youtube.com", "youtu.be", "spotify.com",
+  "soundcloud.com", "telegram.me", "t.me", "twitch.tv", "reddit.com",
+  "roblox.com", "steamcommunity.com", "linkedin.com", "threads.net"
 ];
+
+function decode(value) {
+  return value
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+}
 
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "HEAD") {
     res.setHeader("Allow", "GET, HEAD");
-    return res.status(405).send("Method not allowed");
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const upstream = await fetch(PROFILE_URL, {
+    const upstream = await fetch(SOURCE, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (compatible; MeduProfileMirror/1.0)",
+        "User-Agent": "Mozilla/5.0 (compatible; MeduPortfolio/2.0)",
         "Accept": "text/html,application/xhtml+xml"
       },
       redirect: "follow",
@@ -36,41 +33,34 @@ export default async function handler(req, res) {
     });
 
     if (!upstream.ok) {
-      return res.status(502).send("The source profile is temporarily unavailable.");
+      return res.status(502).json({ error: "Source unavailable" });
     }
 
     const html = await upstream.text();
-    const $ = cheerio.load(html);
+    const socials = [];
+    const seen = new Set();
+    const links = html.match(/<a\\b[^>]*href=(["'])(.*?)\\1[^>]*>/gi) || [];
 
-    for (const selector of REMOVE_SELECTORS) {
-      $(selector).remove();
+    for (const link of links) {
+      const match = link.match(/href=(["'])(.*?)\\1/i);
+      if (!match) continue;
+      let href = decode(match[2]).trim();
+      try {
+        const url = new URL(href, SOURCE);
+        const host = url.hostname.replace(/^www\\./, "").toLowerCase();
+        if (!SOCIAL_HOSTS.some((allowed) => host === allowed || host.endsWith("." + allowed))) continue;
+        const normalized = url.toString();
+        if (seen.has(normalized)) continue;
+        seen.add(normalized);
+        socials.push({ host, url: normalized });
+      } catch {}
     }
 
-    // Remove common ad-network and ad-injection scripts without touching profile scripts.
-    $("script[src]").each((_, element) => {
-      const src = ($(element).attr("src") || "").toLowerCase();
-      if (/(adsystem|adservice|adserver|doubleclick|googlesyndication|googleadservices)/.test(src)) {
-        $(element).remove();
-      }
-    });
-
-    // Resolve source-relative assets and links while keeping the source page's own styling.
-    $("head").prepend('<base href="https://guns.lol/">');
-    $("head").append(`
-      <style id="medu-ad-free-overrides">
-        html, body { min-height: 100% !important; }
-        [class*="advertisement"], [id*="advertisement"],
-        [class*="ad-container"], [id*="ad-container"],
-        .adsbygoogle, [data-ad], [data-ad-slot] { display: none !important; }
-      </style>
-    `);
-
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store, max-age=0");
     res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Robots-Tag", "noindex, nofollow");
-    return res.status(200).send($.html());
-  } catch (error) {
-    return res.status(502).send("Unable to sync the source profile right now.");
+    return res.status(200).json({ source: SOURCE, updatedAt: new Date().toISOString(), socials });
+  } catch {
+    return res.status(502).json({ error: "Unable to sync source data" });
   }
-};
+}
