@@ -2,55 +2,159 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#08080b">
-  <meta name="robots" content="noindex,nofollow">
-  <title>meduu</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070707">
+  <meta name="description" content="Medu — developer, builder, security enthusiast and creator.">
+  <title>MEDU — BUILDING THINGS</title>
   <style>
-    * { box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #08080b; }
-    #profile { display: block; width: 100%; height: 100%; border: 0; background: #08080b; }
-    #error {
-      position: fixed; inset: 0; display: none; place-items: center;
-      padding: 24px; color: #c8c8d0; background: #08080b;
-      font: 14px/1.6 Inter, ui-sans-serif, system-ui, sans-serif; text-align: center;
+    :root {
+      --bg:#070707; --fg:#f2f2ef; --muted:#858585; --line:#222;
+      --panel:rgba(15,15,15,.72); --accent:#ff4d00; --max:1180px;
     }
-    #error.visible { display: grid; }
-    #error span { color: #858591; }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:var(--bg)}
+    body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    #space{position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 50% 20%,#17110c 0,#0b0a09 24%,#070707 60%)}
+    #grid{position:fixed;inset:-20%;z-index:-1;opacity:.17;pointer-events:none;background-image:linear-gradient(#fff1 1px,transparent 1px),linear-gradient(90deg,#fff1 1px,transparent 1px);background-size:70px 70px;transform:perspective(700px) rotateX(62deg) translateY(22%);transform-origin:center}
+    .noise{position:fixed;inset:0;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+    nav{position:fixed;top:0;left:0;right:0;z-index:10;height:72px;border-bottom:1px solid #ffffff0b;background:#070707b8;backdrop-filter:blur(18px);display:flex;align-items:center;justify-content:space-between;padding:0 max(22px,calc((100vw - var(--max))/2))}
+    .brand{font-weight:800;letter-spacing:.14em;font-size:13px}.navlinks{display:flex;gap:24px;color:#999;font-size:13px}.navlinks a:hover{color:#fff}
+    main{width:min(var(--max),calc(100% - 40px));margin:auto}
+    .hero{min-height:100svh;display:grid;place-items:center;padding:110px 0 70px}
+    .hero-inner{width:100%;display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+    .eyebrow{font-size:11px;letter-spacing:.22em;color:#777;text-transform:uppercase;margin-bottom:20px}
+    h1{font-size:clamp(58px,10vw,132px);line-height:.82;letter-spacing:-.075em;margin:0 0 28px;font-weight:800}
+    h1 span{display:block;color:#666}
+    .lead{max-width:620px;color:#aaa;font-size:18px;line-height:1.7}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+    .btn{border:1px solid #303030;background:#111;padding:11px 16px;border-radius:5px;transition:.2s;cursor:pointer}
+    .btn:hover{transform:translateY(-2px);border-color:#555;background:#171717}.btn.primary{background:#eee;color:#080808;border-color:#eee}
+    .orb-wrap{height:500px;display:grid;place-items:center;perspective:900px}
+    .orb{width:min(370px,72vw);aspect-ratio:1;border-radius:50%;position:relative;transform-style:preserve-3d;transition:transform .12s ease-out;background:radial-gradient(circle at 35% 28%,#3c3027 0,#16120f 23%,#090909 62%);box-shadow:inset -35px -35px 70px #000,inset 12px 12px 35px #ffffff10,0 0 100px #ff4d0012}
+    .orb:before,.orb:after{content:"";position:absolute;inset:12%;border:1px solid #ffffff17;border-radius:50%;transform:rotateX(65deg) rotateY(12deg)}
+    .orb:after{inset:22%;transform:rotateX(65deg) rotateY(-32deg);border-color:#ff4d0030}
+    .orb-label{position:absolute;inset:0;display:grid;place-items:center;text-align:center;transform:translateZ(60px);font-size:13px;letter-spacing:.18em;color:#aaa}.orb-label strong{display:block;color:#fff;font-size:26px;letter-spacing:.02em}
+    section{padding:110px 0;border-top:1px solid var(--line)}
+    .section-head{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:34px}.section-head h2{font-size:40px;letter-spacing:-.04em;margin:0}.section-head p{color:#777;max-width:430px;margin:0}
+    .work{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .card{min-height:220px;border:1px solid #202020;background:linear-gradient(135deg,#111,#0a0a0a);padding:24px;display:flex;flex-direction:column;justify-content:space-between;transition:.25s;transform-style:preserve-3d}
+    .card:hover{border-color:#454545;transform:translateY(-5px)}.tag{color:#777;font-size:11px;letter-spacing:.14em;text-transform:uppercase}.card h3{font-size:25px;margin:12px 0 8px}.card p{color:#8e8e8e;max-width:520px}
+    .discord{border:1px solid #252525;background:#0d0d0d;padding:28px;display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center}
+    .avatar{width:62px;height:62px;border-radius:50%;background:#1a1a1a;display:grid;place-items:center;font-weight:800;font-size:20px;border:1px solid #333}.status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;background:#666;margin-right:8px}.status-dot.online{background:#43d17a}
+    .presence-title{font-size:20px;font-weight:700}.presence-sub{color:#777}.activity{color:#aaa;font-size:13px;margin-top:4px}.live{font-size:11px;letter-spacing:.12em;color:#777;text-transform:uppercase}
+    .socials{display:flex;flex-wrap:wrap;gap:8px}.social{border:1px solid #242424;padding:13px 16px;background:#0d0d0d;color:#aaa;transition:.2s}.social:hover{color:#fff;border-color:#555;transform:translateY(-2px)}
+    .stack{display:flex;flex-wrap:wrap;gap:8px}.stack span{border:1px solid #292929;padding:9px 12px;color:#999;background:#0d0d0d}
+    footer{border-top:1px solid var(--line);padding:30px 0 50px;color:#666;display:flex;justify-content:space-between}
+    @media(max-width:800px){.navlinks{display:none}.hero-inner{grid-template-columns:1fr}.orb-wrap{height:330px;order:-1}.orb{width:260px}.work{grid-template-columns:1fr}.discord{grid-template-columns:auto 1fr}.discord .live{grid-column:2}.section-head{display:block}.section-head p{margin-top:12px}h1{font-size:clamp(58px,18vw,100px)}}
   </style>
 </head>
 <body>
-  <iframe id="profile" title="meduu profile" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-  <div id="error" role="status">
-    <div>Profile sync is temporarily unavailable.<br><span>Retrying automatically…</span></div>
-  </div>
+  <div id="space"></div><div id="grid"></div><div class="noise"></div>
+  <nav><a class="brand" href="#">MEDU</a><div class="navlinks"><a href="#work">WORK</a><a href="#presence">DISCORD</a><a href="#socials">SOCIALS</a></div></nav>
+  <main>
+    <section class="hero" style="border:0">
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow">MEDU / DEVELOPER / BUILDER</div>
+          <h1>BUILD.<span>BREAK.</span>REBUILD.</h1>
+          <p class="lead">I build software, bots, tools and experiments. Mostly Python, JavaScript and whatever gets the job done.</p>
+          <div class="actions"><a class="btn primary" href="#work">VIEW WORK</a><a class="btn" href="https://github.com/meduuv" target="_blank" rel="noreferrer">GITHUB ↗</a><a class="btn" href="https://guns.lol/meduu" target="_blank" rel="noreferrer">GUNS.LOL ↗</a></div>
+        </div>
+        <div class="orb-wrap"><div class="orb" id="orb"><div class="orb-label"><div><strong>MEDU</strong>LIVE / BUILDING</div></div></div></div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="section-head"><h2>Selected work</h2><p>Projects are where the actual profile lives. No fake case-study filler.</p></div>
+      <div class="work">
+        <article class="card"><div><span class="tag">AI / AUTOMATION</span><h3>N.I.X</h3><p>Local-first AI agent architecture with Discord, model routing, tools, memory and a browser-facing interface.</p></div><span class="tag">IN PROGRESS</span></article>
+        <article class="card"><div><span class="tag">DISCORD</span><h3>Apeiron</h3><p>Multipurpose Discord bot focused on security, economy and server tooling.</p></div><span class="tag">BUILDING</span></article>
+        <article class="card"><div><span class="tag">DEVELOPER TOOLING</span><h3>Vexel</h3><p>A compact programming language concept designed around expressive syntax and a broad standard library.</p></div><span class="tag">EXPERIMENT</span></article>
+        <article class="card"><div><span class="tag">OPEN SOURCE</span><h3>Free API Index</h3><p>A structured index of public APIs with categories, descriptions, attribution and documentation.</p></div><span class="tag">MEDUUV</span></article>
+      </div>
+    </section>
+
+    <section id="presence">
+      <div class="section-head"><h2>Live presence</h2><p>Discord activity is pulled through Lanyard when a Discord user ID is configured on the deployment.</p></div>
+      <div class="discord">
+        <div class="avatar" id="avatar">M</div>
+        <div><div class="presence-title"><span class="status-dot" id="statusDot"></span><span id="discordName">MEDU</span></div><div class="presence-sub" id="statusText">Connecting to Discord presence…</div><div class="activity" id="activity"></div></div>
+        <div class="live" id="liveState">LIVE</div>
+      </div>
+    </section>
+
+    <section id="socials">
+      <div class="section-head"><h2>Elsewhere</h2><p>Public links. The source profile is checked for additional social links when available.</p></div>
+      <div class="socials" id="socialsList">
+        <a class="social" href="https://github.com/meduuv" target="_blank" rel="noreferrer">GitHub / meduuv ↗</a>
+        <a class="social" href="https://guns.lol/meduu" target="_blank" rel="noreferrer">guns.lol / meduu ↗</a>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>Stack</h2><p>Tools I actually use or build around.</p></div>
+      <div class="stack"><span>Python</span><span>JavaScript</span><span>TypeScript</span><span>Node.js</span><span>React</span><span>Git</span><span>Discord.py</span><span>FastAPI</span><span>Linux</span></div>
+    </section>
+  </main>
+  <footer><span>MEDU / 2026</span><span>BUILDING THINGS THAT PROBABLY SHOULDN'T EXIST.</span></footer>
+
   <script>
-    (() => {
-      const frame = document.getElementById("profile");
-      const error = document.getElementById("error");
-      const SYNC_INTERVAL = 60000;
-      let firstLoad = true;
-      let refreshTimer;
+    const orb = document.getElementById("orb");
+    window.addEventListener("pointermove", (e) => {
+      const x = (e.clientX / innerWidth - .5) * 2;
+      const y = (e.clientY / innerHeight - .5) * 2;
+      orb.style.transform = `rotateY(${x * 12}deg) rotateX(${-y * 12}deg)`;
+    });
 
-      function sync() {
-        const url = "/api/profile?sync=" + Date.now();
-        if (!firstLoad) error.classList.remove("visible");
-        frame.src = url;
+    const labels = { "github.com":"GitHub", "discord.com":"Discord", "discord.gg":"Discord", "instagram.com":"Instagram", "x.com":"X", "twitter.com":"X", "tiktok.com":"TikTok", "youtube.com":"YouTube", "youtu.be":"YouTube", "spotify.com":"Spotify", "soundcloud.com":"SoundCloud", "t.me":"Telegram", "telegram.me":"Telegram", "twitch.tv":"Twitch", "reddit.com":"Reddit", "roblox.com":"Roblox", "steamcommunity.com":"Steam", "linkedin.com":"LinkedIn", "threads.net":"Threads" };
+
+    async function loadSocials() {
+      try {
+        const data = await fetch("/api/profile?sync=" + Date.now(), { cache:"no-store" }).then(r => r.json());
+        const list = document.getElementById("socialsList");
+        const seen = new Set();
+        for (const item of data.socials || []) {
+          if (seen.has(item.url)) continue;
+          seen.add(item.url);
+          const a = document.createElement("a");
+          a.className = "social";
+          a.href = item.url;
+          a.target = "_blank";
+          a.rel = "noreferrer";
+          a.textContent = (labels[item.host] || item.host) + " ↗";
+          list.appendChild(a);
+        }
+      } catch {}
+    }
+
+    async function loadDiscord() {
+      try {
+        const data = await fetch("/api/discord?sync=" + Date.now(), { cache:"no-store" }).then(r => r.json());
+        if (!data.ok) {
+          document.getElementById("statusText").textContent = "Set DISCORD_ID on the deployment to enable live presence.";
+          document.getElementById("liveState").textContent = "SETUP";
+          return;
+        }
+        const p = data.data;
+        const user = p.discord_user || {};
+        document.getElementById("discordName").textContent = user.global_name || user.username || "MEDU";
+        document.getElementById("statusText").textContent = (p.discord_status || "offline").toUpperCase();
+        document.getElementById("statusDot").classList.toggle("online", p.discord_status === "online");
+        document.getElementById("activity").textContent = p.activities?.filter(a => a.type !== 4).map(a => a.name + (a.details ? " — " + a.details : "")).join(" · ") || "";
+        if (user.avatar) document.getElementById("avatar").style.backgroundImage = `url(https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128)`;
+        document.getElementById("avatar").style.backgroundSize = "cover";
+        document.getElementById("avatar").textContent = "";
+        document.getElementById("liveState").textContent = "LIVE";
+      } catch {
+        document.getElementById("statusText").textContent = "Presence temporarily unavailable.";
       }
+    }
 
-      frame.addEventListener("load", () => {
-        firstLoad = false;
-        error.classList.remove("visible");
-      });
-
-      frame.addEventListener("error", () => {
-        error.classList.add("visible");
-      });
-
-      sync();
-      refreshTimer = window.setInterval(sync, SYNC_INTERVAL);
-      window.addEventListener("pagehide", () => window.clearInterval(refreshTimer));
-    })();
+    loadSocials();
+    loadDiscord();
+    setInterval(loadDiscord, 15000);
   </script>
 </body>
 </html>
